@@ -1,0 +1,55 @@
+name: .NET
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ColaboratorC.sln
+        cache:
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/ColaboratorC.sln') }}
+          path: ~/.nuget/packages
+
+      - name: Build
+        run: dotnet build ColaboratorC.sln --no-restore --configuration Release
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ColaboratorC.sln
+        cache:
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/ColaboratorC.sln') }}
+          path: ~/.nuget/packages
+
+      - name: Run unit tests
+        run: dotnet test ColaboratorC.sln --filter FullyQualifiedName~Domain.Tests --configuration Release
+
+      - name: Archive test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: test-results/**

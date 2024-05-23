@@ -13,7 +13,7 @@ using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-
+using WebApi.IntegrationTests.Helpers;
 using Xunit;
 
 namespace WebApi.IntegrationTests.Tests
@@ -79,12 +79,50 @@ namespace WebApi.IntegrationTests.Tests
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             var response = await client.PostAsync(url, content);
             stopwatch.Stop();
+            
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
             Assert.True(stopwatch.Elapsed < maxResponseTime, $"Response time exceeded {maxResponseTime.TotalSeconds} seconds");
         }
-        
+
+
+        [Theory]
+        [InlineData("/api/colaborator")]
+        public async Task PostDuplicate_EndPointReturnError(string url)
+        {
+            // Arrange
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var scopedServices = scope.ServiceProvider;
+                var db = scopedServices.GetRequiredService<AbsanteeContext>();
+    
+                Utilities.ReinitializeDbForTests(db);
+                Utilities.InitializeDbForTests(db);
+            }
+
+            var client = _factory.CreateClient();
+
+            // Create a sample ColaboratorDTO object to be posted
+            var colaboratorDTO = new ColaboratorDTO
+            {
+                Name = "Test Name",
+                Email = "a@email.pt",
+                Street = "Test Street",
+                PostalCode = "12345"
+            };
+
+            // Serialize the ColaboratorDTO object to JSON and set the content type
+            var jsonContent = JsonConvert.SerializeObject(colaboratorDTO);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            // Act
+            var response = await client.PostAsync(url, content); 
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // Status Code 200-299
+            
+        }
         
         [Theory]
         [InlineData("/api/colaborator")]

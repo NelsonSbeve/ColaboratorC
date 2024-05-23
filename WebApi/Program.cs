@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-string queueName = args.Length > 0 ? args[0] : "colab_logsComment";
+string queueName = "C1";
 var port = GetPortForQueue(queueName);
 
 
@@ -98,3 +98,5 @@ static int GetPortForQueue(string queueName)
     int queueIndex = int.Parse(queueName.Substring(1)); // Extract the numeric part of the queue name (assuming it starts with 'C')
     return basePort + queueIndex;
 }
+
+public partial class Program { }
