@@ -11,7 +11,7 @@ using Microsoft.OpenApi.Any;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+var config = builder.Configuration;
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
@@ -23,10 +23,18 @@ builder.Services.AddCors(options =>
         });
 });
 
-string queueName = "C1";
-var port = GetPortForQueue(queueName);
+string queueNameArg =  Array.Find(args, arg => arg.Contains("--queueName"));
+string queueName;
+
+if (queueNameArg != null)
+    queueName = queueNameArg.Split('=')[1];
+   
+else
+    queueName = config.GetConnectionString("queueName");
 
 
+
+ var port = GetPortForQueue(queueName);
 // Add services to the container.
 
 builder.Services.AddControllers();

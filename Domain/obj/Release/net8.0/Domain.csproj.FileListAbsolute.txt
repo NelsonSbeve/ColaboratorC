@@ -1,0 +1,12 @@
+C:\Works\ColaboratorC\Domain\bin\Release\net8.0\Domain.deps.json
+C:\Works\ColaboratorC\Domain\bin\Release\net8.0\Domain.dll
+C:\Works\ColaboratorC\Domain\bin\Release\net8.0\Domain.pdb
+C:\Works\ColaboratorC\Domain\obj\Release\net8.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Works\ColaboratorC\Domain\obj\Release\net8.0\Domain.AssemblyInfoInputs.cache
+C:\Works\ColaboratorC\Domain\obj\Release\net8.0\Domain.AssemblyInfo.cs
+C:\Works\ColaboratorC\Domain\obj\Release\net8.0\Domain.csproj.CoreCompileInputs.cache
+C:\Works\ColaboratorC\Domain\obj\Release\net8.0\Domain.sourcelink.json
+C:\Works\ColaboratorC\Domain\obj\Release\net8.0\Domain.dll
+C:\Works\ColaboratorC\Domain\obj\Release\net8.0\refint\Domain.dll
+C:\Works\ColaboratorC\Domain\obj\Release\net8.0\Domain.pdb
+C:\Works\ColaboratorC\Domain\obj\Release\net8.0\ref\Domain.dll
