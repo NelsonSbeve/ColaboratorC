@@ -6,6 +6,7 @@ using DataModel.Mapper;
 using Domain.Factory;
 using Domain.IRepository;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using Microsoft.OpenApi.Any;
 
 
@@ -35,7 +36,25 @@ else
 
 
  var port = GetPortForQueue(queueName);
+ 
 // Add services to the container.
+            var HostName = config["RabbitMQ:HostName"]; // Ensure correct key name
+            var Port = int.Parse(config["RabbitMQ:Port"]); // Ensure correct key name
+            var UserName = config["RabbitMQ:UserName"]; // Ensure correct key name
+            var Password = config["RabbitMQ:Password"];
+
+
+
+builder.Services.AddSingleton<IConnectionFactory>(sp =>
+{
+    return new ConnectionFactory()
+    {
+        HostName = HostName,
+        Port = Port,
+        UserName = UserName,
+        Password = Password
+    };
+});
 
 builder.Services.AddControllers();
 
@@ -62,8 +81,8 @@ builder.Services.AddTransient<IColaboratorFactory, ColaboratorFactory>();
 builder.Services.AddTransient<ColaboratorMapper>();
 builder.Services.AddTransient<ColaboratorService>();
 builder.Services.AddTransient<ColaboratorPublisher>();
-builder.Services.AddSingleton<IColaboratorConsumer, ColaboratorConsumer>();
-builder.Services.AddSingleton<IHolidayValidationConsumer, HolidayValidationConsumer>();
+builder.Services.AddSingleton<IRabbitMQConsumerController, ColaboratorConsumer>();
+// builder.Services.AddSingleton<IRabbitMQConsumerController, HolidayValidationConsumer>();
 
 
 
@@ -72,6 +91,13 @@ builder.Services.AddSingleton<IHolidayValidationConsumer, HolidayValidationConsu
 
 
 var app = builder.Build();
+
+var rabbitMQConsumerServices = app.Services.GetServices<ColaboratorConsumer>();
+foreach (var service in rabbitMQConsumerServices)
+{
+    service.ConfigQueue(queueName);
+    service.StartConsuming();
+};
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -90,10 +116,12 @@ app.UseCors("AllowAllOrigins");
 app.MapControllers();
 
 
-var rabbitMQConsumerService = app.Services.GetRequiredService<IColaboratorConsumer>();
-rabbitMQConsumerService.StartConsuming(queueName);
-var rabbitMQConsumerServiceHoliday = app.Services.GetRequiredService<IHolidayValidationConsumer>();
-rabbitMQConsumerServiceHoliday.StartHolidayConsuming(queueName);
+var rabbitMQConsumerService = app.Services.GetRequiredService<IRabbitMQConsumerController>();
+rabbitMQConsumerService.ConfigQueue(queueName);
+rabbitMQConsumerService.StartConsuming();
+
+// var rabbitMQConsumerServiceHoliday = app.Services.GetRequiredService<IHolidayValidationConsumer>();
+// rabbitMQConsumerServiceHoliday.StartHolidayConsuming(queueName);
  
 
 app.Run($"https://localhost:{port}");

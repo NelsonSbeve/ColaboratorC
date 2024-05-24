@@ -858,3 +858,10 @@ C:\Works\ColaboratorC\WebApi\obj\Debug\net8.0\refint\WebApi.dll
 C:\Works\ColaboratorC\WebApi\obj\Debug\net8.0\WebApi.pdb
 C:\Works\ColaboratorC\WebApi\obj\Debug\net8.0\WebApi.genruntimeconfig.cache
 C:\Works\ColaboratorC\WebApi\obj\Debug\net8.0\ref\WebApi.dll
+C:\Works\ColaboratorC\WebApi\bin\Debug\net8.0\Docker.DotNet.dll
+C:\Works\ColaboratorC\WebApi\bin\Debug\net8.0\Docker.DotNet.X509.dll
+C:\Works\ColaboratorC\WebApi\bin\Debug\net8.0\ICSharpCode.SharpZipLib.dll
+C:\Works\ColaboratorC\WebApi\bin\Debug\net8.0\Renci.SshNet.dll
+C:\Works\ColaboratorC\WebApi\bin\Debug\net8.0\SshNet.Security.Cryptography.dll
+C:\Works\ColaboratorC\WebApi\bin\Debug\net8.0\Testcontainers.dll
+C:\Works\ColaboratorC\WebApi\bin\Debug\net8.0\Testcontainers.RabbitMq.dll

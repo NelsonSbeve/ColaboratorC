@@ -9,12 +9,13 @@ using NuGet.Packaging.Signing;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-public class HolidayValidationConsumer : IHolidayValidationConsumer
+public class HolidayValidationConsumer : IRabbitMQConsumerController
 {
     private readonly IModel _channel;
    
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private string _queueName;
   
 
     List<string> _errorMessages = new List<string>();
@@ -35,9 +36,24 @@ public class HolidayValidationConsumer : IHolidayValidationConsumer
         Console.WriteLine(" [*] Waiting for Holiday to validate.");
     }
 
-    public void StartHolidayConsuming(string queueName)
+    public void ConfigQueue(string queueName)
+        {
+            _queueName = "colab" + queueName;
+
+            _channel.QueueDeclare(queue: _queueName,
+                                            durable: true,
+                                            exclusive: false,
+                                            autoDelete: false,
+                                            arguments: null);
+
+            _channel.QueueBind(queue: _queueName,
+                  exchange: "colab_logs",
+                  routingKey: string.Empty);
+        }
+
+    public void StartConsuming()
     {
-        string queue = queueName + "holiday";
+        string queue = _queueName + "holiday";
         _channel.QueueDeclare(queue: queue, durable: true, exclusive: false, autoDelete: false);
         _channel.QueueBind(queue: queue, exchange: "HolidayValidation", routingKey: "holiKey");
 

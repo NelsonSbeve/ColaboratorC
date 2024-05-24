@@ -79,6 +79,9 @@ jobs:
     - name: Execute unit tests
       run: dotnet test ColaboratorC.sln --filter FullyQualifiedName~Domain.Tests --configuration Release
 
+    - name: Execute integration tests
+      run: dotnet test ColaboratorC.sln --filter FullyQualifiedName~WebApi.IntegrationTests --configuration Release
+
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration

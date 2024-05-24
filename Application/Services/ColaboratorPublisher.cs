@@ -11,11 +11,11 @@ namespace Application.Services
    
     public class ColaboratorPublisher
     {
-        private readonly ConnectionFactory _connectionFactory;
+        private readonly IConnectionFactory _connectionFactory;
         private readonly string _queueName;
         private readonly IModel channel;
 
-        public ColaboratorPublisher(IConfiguration configuration)
+        public ColaboratorPublisher(IConfiguration configuration, IConnectionFactory factory)
         {
             _connectionFactory = new ConnectionFactory
             {

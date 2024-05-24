@@ -313,6 +313,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
+            },
+            "Testcontainers.RabbitMq": {
+              "target": "Package",
+              "version": "[3.8.0, )"
             }
           },
           "imports": [

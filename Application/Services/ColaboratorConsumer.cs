@@ -7,21 +7,24 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-public class ColaboratorConsumer : IColaboratorConsumer
+public class ColaboratorConsumer : IRabbitMQConsumerController
 {
     private readonly IModel _channel;
    
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IConnectionFactory _factory;
+
+    private string _queueName;
   
 
     List<string> _errorMessages = new List<string>();
 
-    public ColaboratorConsumer(IServiceScopeFactory serviceScopeFactory)
+    public ColaboratorConsumer(IServiceScopeFactory serviceScopeFactory, IConnectionFactory factory)
     {
        
         _serviceScopeFactory = serviceScopeFactory;
-        var factory = new ConnectionFactory { HostName = "localhost" };
+        _factory = factory;
         var connection = factory.CreateConnection();
         _channel = connection.CreateModel();
 
@@ -34,10 +37,24 @@ public class ColaboratorConsumer : IColaboratorConsumer
         Console.WriteLine(" [*] Waiting for Collaborator messages.");
     }
 
-    public void StartConsuming(string queueName)
+        public void ConfigQueue(string queueName)
+        {
+            _queueName = queueName;
+
+            _channel.QueueDeclare(queue: _queueName,
+                                            durable: true,
+                                            exclusive: false,
+                                            autoDelete: false,
+                                            arguments: null);
+
+            _channel.QueueBind(queue: _queueName,
+                  exchange: "colab_logs",
+                  routingKey: "colabKey");
+        }
+
+    public void StartConsuming()
     {
-        _channel.QueueDeclare(queue: queueName, durable: true, exclusive: false, autoDelete: false);
-        _channel.QueueBind(queue: queueName, exchange: "colab_logs", routingKey: "colabKey");
+        
 
 
         var consumer = new EventingBasicConsumer(_channel);
@@ -64,6 +81,6 @@ public class ColaboratorConsumer : IColaboratorConsumer
  
         };
 
-        _channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
+        _channel.BasicConsume(queue: _queueName, autoAck: true, consumer: consumer);
     }
 }
