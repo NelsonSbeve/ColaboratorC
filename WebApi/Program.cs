@@ -25,7 +25,7 @@ builder.Services.AddCors(options =>
 });
 
 string queueNameArg =  Array.Find(args, arg => arg.Contains("--queueName"));
-string queueName;
+string queueName ;
 
 if (queueNameArg != null)
     queueName = queueNameArg.Split('=')[1];
@@ -58,11 +58,23 @@ builder.Services.AddSingleton<IConnectionFactory>(sp =>
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<AbsanteeContext>(opt =>
-    //opt.UseInMemoryDatabase("AbsanteeList")
-    //opt.UseSqlite("Data Source=AbsanteeDatabase.sqlite")
-     opt.UseSqlite(Host.CreateApplicationBuilder().Configuration.GetConnectionString(queueName))
-    );
+// builder.Services.AddDbContext<AbsanteeContext>(opt =>
+//     //opt.UseInMemoryDatabase("AbsanteeList")
+//     //opt.UseSqlite("Data Source=AbsanteeDatabase.sqlite")
+//      opt.UseSqlite(Host.CreateApplicationBuilder().Configuration.GetConnectionString(queueName))
+//     );
+var DBConnectionString = config.GetConnectionString("DBConnectionString");
+builder.Services.AddDbContext<AbsanteeContext>(option =>
+{
+    option.UseNpgsql(DBConnectionString);
+}, optionsLifetime: ServiceLifetime.Singleton);
+ 
+ 
+builder.Services.AddDbContextFactory<AbsanteeContext>(options =>
+{
+    options.UseNpgsql(DBConnectionString);
+});
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
