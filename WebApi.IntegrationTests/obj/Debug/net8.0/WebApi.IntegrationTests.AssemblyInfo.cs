@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebApi.IntegrationTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2a9d68ed0d6c90781eb3cd0563bb8fcafc137783")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bc21d2932b4cce4f478586c93217f42d7863e1ba")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebApi.IntegrationTests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebApi.IntegrationTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

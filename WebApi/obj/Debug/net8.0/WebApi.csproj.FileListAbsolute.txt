@@ -867,3 +867,4 @@ C:\Works\ColaboratorC\WebApi\bin\Debug\net8.0\Testcontainers.dll
 C:\Works\ColaboratorC\WebApi\bin\Debug\net8.0\Testcontainers.RabbitMq.dll
 C:\Works\ColaboratorC\webapi\bin\Debug\net8.0\Npgsql.dll
 C:\Works\ColaboratorC\webapi\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+C:\Works\ColaboratorC\WebApi\bin\Debug\net8.0\Testcontainers.PostgreSql.dll

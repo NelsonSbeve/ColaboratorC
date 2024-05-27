@@ -22,6 +22,8 @@
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Testcontainers" Version="3.8.0" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="3.8.0" />
     <PackageReference Include="Testcontainers.RabbitMq" Version="3.8.0" />
   </ItemGroup>
   <ItemGroup>

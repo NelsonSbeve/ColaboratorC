@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "L4+Hiu/mqPn7ryjqJ2FW1Zdaw61s9XAVm0Yg4pzhnk3qEy9zEyQvDjPU+CQub309xzPyjvgxCtChnkrKWP1ojg==",
+  "dgSpecHash": "925k9xPfqgwICo+PFTyN3lrUor1d43yGacVhTrhRD3/Kp9vWL++0I1rcbduwK1m/U5afQ/+YW4CadW7kGHcaEg==",
   "success": true,
-  "projectFilePath": "C:\\Works\\ColaboratorC\\webapi\\WebApi.csproj",
+  "projectFilePath": "C:\\Works\\ColaboratorC\\WebApi\\WebApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\naguiar\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\naguiar\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
@@ -190,6 +190,7 @@
     "C:\\Users\\naguiar\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "C:\\Users\\naguiar\\.nuget\\packages\\system.windows.extensions\\7.0.0\\system.windows.extensions.7.0.0.nupkg.sha512",
     "C:\\Users\\naguiar\\.nuget\\packages\\testcontainers\\3.8.0\\testcontainers.3.8.0.nupkg.sha512",
+    "C:\\Users\\naguiar\\.nuget\\packages\\testcontainers.postgresql\\3.8.0\\testcontainers.postgresql.3.8.0.nupkg.sha512",
     "C:\\Users\\naguiar\\.nuget\\packages\\testcontainers.rabbitmq\\3.8.0\\testcontainers.rabbitmq.3.8.0.nupkg.sha512"
   ],
   "logs": []

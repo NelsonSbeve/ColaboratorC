@@ -3231,6 +3231,22 @@
           }
         }
       },
+      "Testcontainers.PostgreSql/3.8.0": {
+        "type": "package",
+        "dependencies": {
+          "Testcontainers": "3.8.0"
+        },
+        "compile": {
+          "lib/net8.0/Testcontainers.PostgreSql.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Testcontainers.PostgreSql.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Testcontainers.RabbitMq/3.8.0": {
         "type": "package",
         "dependencies": {
@@ -9143,6 +9159,29 @@
         "testcontainers.nuspec"
       ]
     },
+    "Testcontainers.PostgreSql/3.8.0": {
+      "sha512": "5sKpj6z4+Z92BFBILvjHqDry4OH9xyngqkeSM3ZrW5wTOJfu8GL0z5p/ZwYBQySPHQBbDa5et5r51Ga1i02ahQ==",
+      "type": "package",
+      "path": "testcontainers.postgresql/3.8.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "README.md",
+        "docs/banner.png",
+        "docs/logo.png",
+        "lib/net6.0/Testcontainers.PostgreSql.dll",
+        "lib/net6.0/Testcontainers.PostgreSql.xml",
+        "lib/net8.0/Testcontainers.PostgreSql.dll",
+        "lib/net8.0/Testcontainers.PostgreSql.xml",
+        "lib/netstandard2.0/Testcontainers.PostgreSql.dll",
+        "lib/netstandard2.0/Testcontainers.PostgreSql.xml",
+        "lib/netstandard2.1/Testcontainers.PostgreSql.dll",
+        "lib/netstandard2.1/Testcontainers.PostgreSql.xml",
+        "testcontainers.postgresql.3.8.0.nupkg.sha512",
+        "testcontainers.postgresql.nuspec"
+      ]
+    },
     "Testcontainers.RabbitMq/3.8.0": {
       "sha512": "hDY9/7vLyJPUK5a4KH1blJwPbC4F7MWVNAI2Z0QgSamOoFXMHEj7d5rFFxEVDcMu69bUWLt2/agLGiPUMtf47g==",
       "type": "package",
@@ -9197,6 +9236,8 @@
       "Npgsql >= 8.0.3",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 8.0.4",
       "Swashbuckle.AspNetCore >= 6.4.0",
+      "Testcontainers >= 3.8.0",
+      "Testcontainers.PostgreSql >= 3.8.0",
       "Testcontainers.RabbitMq >= 3.8.0"
     ]
   },
@@ -9295,6 +9336,14 @@
           "Swashbuckle.AspNetCore": {
             "target": "Package",
             "version": "[6.4.0, )"
+          },
+          "Testcontainers": {
+            "target": "Package",
+            "version": "[3.8.0, )"
+          },
+          "Testcontainers.PostgreSql": {
+            "target": "Package",
+            "version": "[3.8.0, )"
           },
           "Testcontainers.RabbitMq": {
             "target": "Package",

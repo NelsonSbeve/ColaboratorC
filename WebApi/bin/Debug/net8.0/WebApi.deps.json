@@ -21,6 +21,8 @@
           "Npgsql": "8.0.3",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.4",
           "Swashbuckle.AspNetCore": "6.4.0",
+          "Testcontainers": "3.8.0",
+          "Testcontainers.PostgreSql": "3.8.0",
           "Testcontainers.RabbitMq": "3.8.0"
         },
         "runtime": {
@@ -2240,6 +2242,17 @@
           }
         }
       },
+      "Testcontainers.PostgreSql/3.8.0": {
+        "dependencies": {
+          "Testcontainers": "3.8.0"
+        },
+        "runtime": {
+          "lib/net8.0/Testcontainers.PostgreSql.dll": {
+            "assemblyVersion": "3.8.0.0",
+            "fileVersion": "3.8.0.0"
+          }
+        }
+      },
       "Testcontainers.RabbitMq/3.8.0": {
         "dependencies": {
           "Testcontainers": "3.8.0"
@@ -3588,6 +3601,13 @@
       "sha512": "sha512-R0+4VTGtFm+Q50+dP7Rm+ZB6thjKdBF3mGYbh5dEf/qt+r35MdFx8tMsE0VIbtaqgJMsOSD06CUZB2wPqBe2cw==",
       "path": "testcontainers/3.8.0",
       "hashPath": "testcontainers.3.8.0.nupkg.sha512"
+    },
+    "Testcontainers.PostgreSql/3.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5sKpj6z4+Z92BFBILvjHqDry4OH9xyngqkeSM3ZrW5wTOJfu8GL0z5p/ZwYBQySPHQBbDa5et5r51Ga1i02ahQ==",
+      "path": "testcontainers.postgresql/3.8.0",
+      "hashPath": "testcontainers.postgresql.3.8.0.nupkg.sha512"
     },
     "Testcontainers.RabbitMq/3.8.0": {
       "type": "package",

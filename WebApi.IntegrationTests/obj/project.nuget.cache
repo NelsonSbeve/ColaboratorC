@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "40j+Il23ymy1FuI4/YUfZJXYxCQZUeUo13AzYuQqDPAwFrBHkm8Q0pSOHAN5TINksLcUKuO1exQMPA0qeOPyDw==",
+  "dgSpecHash": "5oE1Ht4BJsUA7i7F5grpPnfhVo9+ZVVU1PjN7FryzQJTWg7dg5zSZ0i/M4sp9UWymyHlbxlAW1zGhtRhVyNP/Q==",
   "success": true,
   "projectFilePath": "C:\\Works\\ColaboratorC\\WebApi.IntegrationTests\\WebApi.IntegrationTests.csproj",
   "expectedPackageFiles": [
@@ -280,6 +280,7 @@
     "C:\\Users\\naguiar\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\naguiar\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
     "C:\\Users\\naguiar\\.nuget\\packages\\testcontainers\\3.8.0\\testcontainers.3.8.0.nupkg.sha512",
+    "C:\\Users\\naguiar\\.nuget\\packages\\testcontainers.postgresql\\3.8.0\\testcontainers.postgresql.3.8.0.nupkg.sha512",
     "C:\\Users\\naguiar\\.nuget\\packages\\testcontainers.rabbitmq\\3.8.0\\testcontainers.rabbitmq.3.8.0.nupkg.sha512",
     "C:\\Users\\naguiar\\.nuget\\packages\\xunit\\2.5.3\\xunit.2.5.3.nupkg.sha512",
     "C:\\Users\\naguiar\\.nuget\\packages\\xunit.abstractions\\2.0.3\\xunit.abstractions.2.0.3.nupkg.sha512",
