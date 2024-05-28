@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Any;
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration;
+var config2 = builder.Configuration;
 
 builder.Services.AddCors(options =>
 {
@@ -24,26 +25,27 @@ builder.Services.AddCors(options =>
 });
 
 string queueNameArg = Array.Find(args, arg => arg.Contains("--queueName"));
-string queueName;
+string queueName = "C1";
 
-if (queueNameArg != null)
-    queueName = queueNameArg.Split('=')[1];
-else
-    queueName = config["queueName"] ?? config.GetConnectionString("queueName");
+// if (queueNameArg != null)
+//     queueName = queueNameArg.Split('=')[1];
+// else
+//     queueName = config["queueName"] ?? config.GetConnectionString("queueName");
+
 
 var port = GetPortForQueue(queueName);
 
-var HostName = config["RabbitMQ:Host"];
-var Port = int.Parse(config["RabbitMQ:Port"]);
-var UserName = config["RabbitMQ:UserName"];
-var Password = config["RabbitMQ:Password"];
+var HostName = "rabbitmq";
+var PortMQ = "5672";
+var UserName = "guest";
+var Password = "guest";
 
 builder.Services.AddSingleton<IConnectionFactory>(sp =>
 {
     return new ConnectionFactory()
     {
         HostName = HostName,
-        Port = Port,
+        Port = int.Parse(PortMQ),
         UserName = UserName,
         Password = Password
     };
@@ -82,18 +84,18 @@ builder.Services.AddSingleton<IRabbitMQConsumerController, ColaboratorConsumer>(
 
 var app = builder.Build();
 
-var rabbitMQConsumerServices = app.Services.GetServices<ColaboratorConsumer>();
-foreach (var service in rabbitMQConsumerServices)
-{
-    service.ConfigQueue(queueName);
-    service.StartConsuming();
-}
+// var rabbitMQConsumerServices = app.Services.GetServices<ColaboratorConsumer>();
+// foreach (var service in rabbitMQConsumerServices)
+// {
+//     service.ConfigQueue(queueName);
+//     service.StartConsuming();
+// }
 
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
 
 app.UseHttpsRedirection();
 
@@ -107,7 +109,7 @@ var rabbitMQConsumerService = app.Services.GetRequiredService<IRabbitMQConsumerC
 rabbitMQConsumerService.ConfigQueue(queueName);
 rabbitMQConsumerService.StartConsuming();
 
-app.Run($"https://localhost:{port}");
+app.Run();
 
 static int GetPortForQueue(string queueName)
 {
