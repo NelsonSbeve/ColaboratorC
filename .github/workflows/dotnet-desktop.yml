@@ -9,6 +9,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,41 +38,47 @@ jobs:
 
       - name: Build
         run: dotnet build ColaboratorC.sln --no-restore --configuration Release
+
   tests:
-   runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-   needs: build
+    needs: build
 
-   steps:
-     - name: Checkout repository
-       uses: actions/checkout@v3
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
 
-     - name: Set up .NET Core SDK
-       uses: actions/setup-dotnet@v3
-       with:
-         dotnet-version: '8.0.x'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-     - name: Cache .NET packages
-       uses: actions/cache@v3
-       with:
-         path: ~/.nuget/packages
-         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-         restore-keys: |
-           ${{ runner.os }}-nuget-
+      - name: Set up .NET Core SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
 
-     - name: Restore dependencies
-       run: dotnet restore ColaboratorC.sln
+      - name: Cache .NET packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
-     - name: Run Unit Tests
-       run: dotnet test ColaboratorC.sln --filter FullyQualifiedName~Domain.Tests --configuration Release
+      - name: Restore dependencies
+        run: dotnet restore ColaboratorC.sln
 
-     - name: Run Integration Tests
-       run: dotnet test ColaboratorC.sln --filter FullyQualifiedName~WebApi.IntegrationTests --configuration Release
+      - name: Run Unit Tests
+        run: dotnet test ColaboratorC.sln --filter FullyQualifiedName~Domain.Tests --configuration Release
 
-     - name: Upload Integration Test Results
-       uses: actions/upload-artifact@v3
-       with:
-         name: test-results
-         path: test-results/
+      - name: Run Integration Tests
+        run: dotnet test ColaboratorC.sln --filter FullyQualifiedName~WebApi.IntegrationTests --configuration Release
 
-
+      - name: Upload Integration Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
