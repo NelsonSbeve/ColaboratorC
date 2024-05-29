@@ -1,4 +1,4 @@
-image: mcr.microsoft.com/dotnet/core/sdk:8.0
+image: mcr.microsoft.com/dotnet/sdk:8.0
 
 pipelines:
   default:
@@ -6,6 +6,8 @@ pipelines:
         name: Build
         caches:
           - dotnetcore
+        services:
+          - docker
         script:
           - echo "Build step"
           - git checkout $BITBUCKET_BRANCH
@@ -54,3 +56,4 @@ definitions:
   services:
     docker:
       memory: 2048
+      image: docker:20.10.24
