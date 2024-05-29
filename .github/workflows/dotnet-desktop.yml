@@ -19,7 +19,17 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Start RabbitMQ container
-        run: docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+        run: docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management
+
+      - name: Ensure RabbitMQ is ready
+        run: |
+          for i in {1..10}; do
+            if docker exec rabbitmq rabbitmqctl status; then
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
 
       - name: Cache .NET packages
         uses: actions/cache@v4
@@ -58,7 +68,17 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Start RabbitMQ container
-        run: docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+        run: docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management
+
+      - name: Ensure RabbitMQ is ready
+        run: |
+          for i in {1..10}; do
+            if docker exec rabbitmq rabbitmqctl status; then
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
 
       - name: Cache .NET packages
         uses: actions/cache@v4

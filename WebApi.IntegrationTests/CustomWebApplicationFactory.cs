@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
 using Xunit;
@@ -94,7 +95,33 @@ public class CustomWebApplicationFactory<TProgram>
         _rabbitHost = _rabbitMqContainer.Hostname;
         _rabbitPort = _rabbitMqContainer.GetMappedPublicPort(5672);
 
+        // Ensure RabbitMQ is ready
+        await WaitForRabbitMqAsync(_rabbitHost, _rabbitPort);
+
         await Task.Delay(10000); // Ensure containers are fully ready
+    }
+
+    private async Task WaitForRabbitMqAsync(string host, int port)
+    {
+        var factory = new ConnectionFactory() { HostName = host, Port = port, UserName = "guest", Password = "guest" };
+        for (int i = 0; i < 10; i++)
+        {
+            try
+            {
+                using (var connection = factory.CreateConnection())
+                {
+                    if (connection.IsOpen)
+                    {
+                        return;
+                    }
+                }
+            }
+            catch
+            {
+                await Task.Delay(1000); // Wait for 1 second before retrying
+            }
+        }
+        throw new Exception("RabbitMQ is not ready");
     }
 
     public async Task DisposeAsync()
