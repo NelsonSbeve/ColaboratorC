@@ -28,6 +28,7 @@ jobs:
 
       - name: Start services with Docker Compose
         run: |
+          docker-compose pull absantee
           docker-compose up -d
           docker-compose ps
 

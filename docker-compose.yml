@@ -38,4 +38,6 @@ services:
     environment:
       - RABBITMQ_HOST=rabbitmq
       - POSTGRES_HOST=postgres
-    entrypoint: ["sh", "-c", "while ! nc -z rabbitmq 5672; do sleep 1; done; while ! nc -z postgres 5432; do sleep 1; done; ./your-entrypoint-command"]
+    entrypoint: sh -c "while ! nc -z rabbitmq 5672; do sleep 1; done && while ! nc -z postgres 5432; do sleep 1; done && dotnet run --project C:\\Works\\ColaboratorC\\WebApi\\WebApi.csproj"
+
+
