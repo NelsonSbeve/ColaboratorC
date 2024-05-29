@@ -1,37 +1,32 @@
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using DataModel.Repository;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
-using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
 using Xunit;
 
 public class CustomWebApplicationFactory<TProgram>
     : WebApplicationFactory<TProgram>, IAsyncLifetime where TProgram : class
 {
-    private PostgreSqlContainer _postgresContainer;
-    private RabbitMqContainer _rabbitMqContainer;
-    private string _postgresHost;
-    private int _postgresPort;
+       private RabbitMqContainer _rabbitMqContainer;
+  
     private string _rabbitHost;
     private int _rabbitPort;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        var configurationValues = new Dictionary<string, string>
+
+      var configurationValues = new Dictionary<string, string>
         {
-            {"ConnectionStrings:DefaultConnection", $"Host={_postgresHost};Port={_postgresPort};Username=postgres;Password=mysecretpassword;Database=mydatabase"},
-            {"RabbitMQ:Host", _rabbitHost},
-            {"RabbitMQ:Port", _rabbitPort.ToString()},
-            {"RabbitMQ:UserName", "guest"},
-            {"RabbitMQ:Password", "guest"},
-            {"queueName", "C1"}
+            { "queueName", "C1" },
         };
 
         var configuration = new ConfigurationBuilder()
@@ -44,7 +39,7 @@ public class CustomWebApplicationFactory<TProgram>
                    configurationBuilder.AddInMemoryCollection(configurationValues);
                });
 
-        builder.ConfigureServices(services =>
+        builder.ConfigureServices((context, services) =>
         {
             var dbContextDescriptor = services.SingleOrDefault(
                 d => d.ServiceType == typeof(DbContextOptions<AbsanteeContext>));
@@ -54,30 +49,35 @@ public class CustomWebApplicationFactory<TProgram>
                 services.Remove(dbContextDescriptor);
             }
 
-            services.AddDbContext<AbsanteeContext>(options =>
+            var dbConnectionDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(DbConnection));
+
+            if (dbConnectionDescriptor != null)
             {
-                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+                services.Remove(dbConnectionDescriptor);
+            }
+
+            services.AddSingleton<DbConnection>(container =>
+            {
+                var connection = new SqliteConnection("DataSource=:memory:");
+                connection.Open();
+                return connection;
             });
 
-            services.AddDbContextFactory<AbsanteeContext>(options =>
+            services.AddDbContext<AbsanteeContext>((container, options) =>
             {
-                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
-            }, ServiceLifetime.Scoped);
+                var connection = container.GetRequiredService<DbConnection>();
+                options.UseSqlite(connection);
+            });
         });
 
         builder.UseEnvironment("Development");
+    
     }
 
     public async Task InitializeAsync()
     {
-        _postgresContainer = new PostgreSqlBuilder()
-            .WithDatabase("mydatabase")
-            .WithUsername("postgres")
-            .WithPassword("mysecretpassword")
-            .WithImage("postgres:latest")
-            .WithCleanUp(true)
-            .Build();
-
+  
         _rabbitMqContainer = new RabbitMqBuilder()
             .WithImage("rabbitmq:3.13-management")
             .WithPortBinding(5672, true)
@@ -86,11 +86,10 @@ public class CustomWebApplicationFactory<TProgram>
             .WithEnvironment("RABBITMQ_DEFAULT_PASS", "guest")
             .Build();
 
-        await _postgresContainer.StartAsync();
+      
         await _rabbitMqContainer.StartAsync();
 
-        _postgresHost = _postgresContainer.Hostname;
-        _postgresPort = _postgresContainer.GetMappedPublicPort(5432);
+        
 
         _rabbitHost = _rabbitMqContainer.Hostname;
         _rabbitPort = _rabbitMqContainer.GetMappedPublicPort(5672);
@@ -98,7 +97,12 @@ public class CustomWebApplicationFactory<TProgram>
         // Ensure RabbitMQ is ready
         await WaitForRabbitMqAsync(_rabbitHost, _rabbitPort);
 
-        await Task.Delay(10000); // Ensure containers are fully ready
+        await Task.Delay(10000);
+        
+        Environment.SetEnvironmentVariable("RABBITMQ_PORT", _rabbitPort.ToString());
+        Environment.SetEnvironmentVariable("RABBITMQ_HOSTNAME", _rabbitHost);
+        Environment.SetEnvironmentVariable("RABBITMQ_USERNAME", "guest");
+        Environment.SetEnvironmentVariable("RABBITMQ_PASSWORD", "guest"); // Ensure containers are fully ready
     }
 
     private async Task WaitForRabbitMqAsync(string host, int port)
@@ -126,11 +130,7 @@ public class CustomWebApplicationFactory<TProgram>
 
     public async Task DisposeAsync()
     {
-        if (_postgresContainer != null)
-        {
-            await _postgresContainer.DisposeAsync();
-        }
-
+    
         if (_rabbitMqContainer != null)
         {
             await _rabbitMqContainer.DisposeAsync();

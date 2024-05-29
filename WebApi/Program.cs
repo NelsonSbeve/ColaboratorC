@@ -27,6 +27,12 @@ builder.Services.AddCors(options =>
 string queueNameArg = Array.Find(args, arg => arg.Contains("--queueName"));
 string queueName = "C1";
 
+Console.WriteLine("Environment Development: " + config["ASPNETCORE_ENVIRONMENT"]);
+
+
+RabbitMqConfiguration rabbitMqConfig = config.DefineRabbitMqConfiguration();
+Console.WriteLine("RabbitMqConfig: " + rabbitMqConfig.Hostname);
+
 // if (queueNameArg != null)
 //     queueName = queueNameArg.Split('=')[1];
 // else
@@ -35,19 +41,16 @@ string queueName = "C1";
 
 var port = GetPortForQueue(queueName);
 
-var HostName = "rabbitmq";
-var PortMQ = "5672";
-var UserName = "guest";
-var Password = "guest";
+
 
 builder.Services.AddSingleton<IConnectionFactory>(sp =>
 {
     return new ConnectionFactory()
     {
-        HostName = HostName,
-        Port = int.Parse(PortMQ),
-        UserName = UserName,
-        Password = Password
+        HostName = rabbitMqConfig.Hostname,
+        UserName = rabbitMqConfig.Username,
+        Password = rabbitMqConfig.Password,
+        Port = rabbitMqConfig.Port
     };
 });
 

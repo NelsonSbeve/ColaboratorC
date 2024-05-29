@@ -11,22 +11,17 @@ namespace Application.Services
    
     public class ColaboratorPublisher
     {
-        private readonly IConnectionFactory _connectionFactory;
+       
         private readonly string _queueName;
         private readonly IModel channel;
+        private readonly IConnectionFactory _factory;
 
         public ColaboratorPublisher(IConfiguration configuration, IConnectionFactory factory)
         {
-            _connectionFactory = new ConnectionFactory
-            {
-                HostName = configuration["RabbitMQ:HostName"], // Ensure correct key name
-                Port = int.Parse(configuration["RabbitMQ:Port"]), // Ensure correct key name
-                UserName = configuration["RabbitMQ:UserName"], // Ensure correct key name
-                Password = configuration["RabbitMQ:Password"]
-            };
-           _queueName = configuration["RabbitMQ:QueueName"] ?? throw new InvalidOperationException("Queue name is null. Please check configuration.");
            
-            var connection = _connectionFactory.CreateConnection();
+            _factory = factory;
+
+            var connection = factory.CreateConnection();
             channel = connection.CreateModel();
             channel.ExchangeDeclare(exchange: "colab_logs", type: ExchangeType.Fanout);
         
