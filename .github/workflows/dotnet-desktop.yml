@@ -18,21 +18,6 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Start RabbitMQ container
-        run: |
-          docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 --hostname rabbit rabbitmq:3.13-management
-          docker ps -a
-
-      - name: Ensure RabbitMQ is ready
-        run: |
-          for i in {1..10}; do
-            if docker exec rabbitmq rabbitmqctl status; then
-              exit 0
-            fi
-            sleep 3
-          done
-          exit 1
-
       - name: Cache .NET packages
         uses: actions/cache@v4
         with:
@@ -41,19 +26,30 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
+      - name: Start services with Docker Compose
+        run: |
+          docker-compose up -d
+          docker-compose ps
+
+      - name: Wait for RabbitMQ to be healthy
+        run: |
+          for i in {1..10}; do
+            if [ "$(docker inspect --format='{{json .State.Health.Status}}' $(docker-compose ps -q rabbitmq))" == "\"healthy\"" ]; then
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
       - name: Restore dependencies
         run: dotnet restore ColaboratorC.sln
 
       - name: Build
         run: dotnet build ColaboratorC.sln --no-restore --configuration Release
 
-      - name: Stop RabbitMQ container
+      - name: Stop services with Docker Compose
         if: always()
-        run: docker stop rabbitmq
-
-      - name: Remove RabbitMQ container
-        if: always()
-        run: docker rm rabbitmq
+        run: docker-compose down
 
   tests:
     runs-on: ubuntu-latest
@@ -69,18 +65,18 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Start RabbitMQ container
+      - name: Start services with Docker Compose
         run: |
-          docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 --hostname rabbit rabbitmq:3.13-management
-          docker ps -a
+          docker-compose up -d
+          docker-compose ps
 
-      - name: Ensure RabbitMQ is ready
+      - name: Wait for RabbitMQ to be healthy
         run: |
           for i in {1..10}; do
-            if docker exec rabbitmq rabbitmqctl status; then
+            if [ "$(docker inspect --format='{{json .State.Health.Status}}' $(docker-compose ps -q rabbitmq))" == "\"healthy\"" ]; then
               exit 0
             fi
-            sleep 3
+            sleep 5
           done
           exit 1
 
@@ -107,10 +103,6 @@ jobs:
           name: test-results
           path: test-results/
 
-      - name: Stop RabbitMQ container
+      - name: Stop services with Docker Compose
         if: always()
-        run: docker stop rabbitmq
-
-      - name: Remove RabbitMQ container
-        if: always()
-        run: docker rm rabbitmq
+        run: docker-compose down
