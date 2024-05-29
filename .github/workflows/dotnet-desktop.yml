@@ -26,10 +26,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      - name: Build Docker Image
-        run: docker build -t absantee:latest .
-        working-directory: ./path/to/your/dockerfile/directory
-
       - name: Start services with Docker Compose
         run: |
           docker-compose up -d
