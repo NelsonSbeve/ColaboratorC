@@ -31,16 +31,6 @@ jobs:
           docker-compose up -d
           docker-compose ps
 
-      - name: Wait for RabbitMQ to be healthy
-        run: |
-          for i in {1..10}; do
-            if [ "$(docker inspect --format='{{json .State.Health.Status}}' $(docker-compose ps -q rabbitmq))" == "\"healthy\"" ]; then
-              exit 0
-            fi
-            sleep 5
-          done
-          exit 1
-
       - name: Restore dependencies
         run: dotnet restore ColaboratorC.sln
 
@@ -74,6 +64,16 @@ jobs:
         run: |
           for i in {1..10}; do
             if [ "$(docker inspect --format='{{json .State.Health.Status}}' $(docker-compose ps -q rabbitmq))" == "\"healthy\"" ]; then
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Wait for PostgreSQL to be healthy
+        run: |
+          for i in {1..10}; do
+            if [ "$(docker inspect --format='{{json .State.Health.Status}}' $(docker-compose ps -q postgres))" == "\"healthy\"" ]; then
               exit 0
             fi
             sleep 5
