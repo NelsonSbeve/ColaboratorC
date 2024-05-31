@@ -3,57 +3,38 @@ image: mcr.microsoft.com/dotnet/sdk:8.0
 pipelines:
   default:
     - step:
-        name: Build
+        name: Checkout repository
         caches:
           - dotnetcore
-        services:
-          - docker
         script:
-          - echo "Build step"
           - git checkout $BITBUCKET_BRANCH
-          - export NUGET_PACKAGES_CACHE=$(mktemp -d)
-          - export NUGET_PACKAGES=$NUGET_PACKAGES_CACHE
           - dotnet restore ColaboratorC.sln
-          - dotnet build ColaboratorC.sln --configuration Release
-          - docker-compose up -d
-          - docker-compose ps
-          - docker-compose down
+          - dotnet build ColaboratorC.sln --no-restore --configuration Release
+
     - step:
-        name: Test
+        name: Run Domain Tests
+        caches:
+          - dotnetcore
+        script:
+          - dotnet test ColaboratorC.sln --filter FullyQualifiedName~Domain.Tests --configuration Release
+        artifacts:
+          - test-results/**
+
+    - step:
+        name: Run Integration Tests
         caches:
           - dotnetcore
         services:
           - docker
         script:
-          - echo "Test step"
-          - git checkout $BITBUCKET_BRANCH
-          - export NUGET_PACKAGES_CACHE=$(mktemp -d)
-          - export NUGET_PACKAGES=$NUGET_PACKAGES_CACHE
-          - docker-compose up -d
-          - docker-compose ps
-          - for i in {1..10}; do
-              if [ "$(docker inspect --format='{{json .State.Health.Status}}' $(docker-compose ps -q rabbitmq))" == "\"healthy\"" ]; then
-                break;
-              fi
-              sleep 5;
-            done
-          - for i in {1..10}; do
-              if [ "$(docker inspect --format='{{json .State.Health.Status}}' $(docker-compose ps -q postgres))" == "\"healthy\"" ]; then
-                break;
-              fi
-              sleep 5;
-            done
           - dotnet restore ColaboratorC.sln
-          - dotnet test ColaboratorC.sln --filter FullyQualifiedName~Domain.Tests --configuration Release
           - dotnet test ColaboratorC.sln --filter FullyQualifiedName~WebApi.IntegrationTests --configuration Release
-          - docker-compose down
         artifacts:
-          - test-results/
+          - test-results/**
 
 definitions:
   caches:
-    dotnetcore: $NUGET_PACKAGES_CACHE
+    dotnetcore: ~/.nuget/packages
   services:
     docker:
       memory: 2048
-      image: docker:20.10.24

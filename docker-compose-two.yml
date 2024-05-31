@@ -1,0 +1,92 @@
+version: '3.9'
+name: 'absantee-colab'
+services:
+  rabbitmq:
+    container_name: rabbitmq-colab
+    image: rabbitmq:3.11-management
+    restart: always
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=unique-erlang-cookie
+      - RABBITMQ_PLUGINS_DIR=/opt/rabbitmq/plugins:/usr/lib/rabbitmq/plugins
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - absantee_network
+
+  postgressqlc:
+    container_name: absanteepostc
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - "postgres-data_0:/var/lib/postgresql/data"
+    networks:
+      - absantee_network
+
+  postgressqlq:
+    container_name: absanteepostq
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - "postgres-data_1:/var/lib/postgresql/data"
+    networks:
+      - absantee_network
+
+  absanteeq:
+    container_name: absanteeq
+    image: absanteeq:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_CONNECTION=Host=postgressqlq;User id=postgres;Password=password;Database=postgres
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      - RABBITMQ_HOSTNAME=rabbitmq
+      - RABBIT_MQ_PROJECT_CREATED=ProjectRepl1QueryQueue
+      - RABBIT_MQ_PROJECT_UPDATED=ProjectRepl1UpdateQueryQueue
+    ports:
+      - "5186:8080"
+    depends_on:
+      - postgressqlq
+      - rabbitmq
+    networks:
+      - absantee_network
+  absantee:
+    container_name: absantee
+    image: absantee:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_CONNECTION=Host=postgressqlc;User id=postgres;Password=password;Database=postgres
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      - RABBITMQ_HOSTNAME=rabbitmq
+      - RABBIT_MQ_PROJECT_CREATED=ProjectRepl1CommandQueue
+      - RABBIT_MQ_PROJECT_UPDATED=ProjectRepl1UpdateCommandQueue
+    ports:
+      - "5188:8080"
+    depends_on:
+      - postgressqlc
+      - rabbitmq
+    networks:
+      - absantee_network
+networks:
+  absantee_network:
+    driver: bridge
+volumes:
+  postgres-data_0:
+  postgres-data_1:
