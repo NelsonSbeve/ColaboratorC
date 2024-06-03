@@ -56,7 +56,8 @@ builder.Services.AddSingleton<IConnectionFactory>(sp =>
 
 builder.Services.AddControllers();
 
-var DBConnectionString = config.GetConnectionString("DBConnectionString");
+string DBConnectionString = config.DefineDbConnection();
+Console.WriteLine("DBConnectionString: " + DBConnectionString);
 
 builder.Services.AddDbContext<AbsanteeContext>(options =>
 {
